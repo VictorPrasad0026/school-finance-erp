@@ -1,61 +1,48 @@
+const STUDENT_STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  SUSPENDED: 'suspended',
+  GRADUATED: 'graduated',
+  TRANSFERRED: 'transferred',
+};
+
+const TRANSACTION_TYPES = {
+  PAYMENT: 'payment',
+  DISCOUNT: 'discount',
+  EXPENSE: 'expense',
+  REFUND: 'refund',
+  ADJUSTMENT: 'adjustment',
+};
+
+const PAYMENT_MODES = {
+  CASH: 'cash',
+  CHEQUE: 'cheque',
+  BANK_TRANSFER: 'bank_transfer',
+  UPI: 'upi',
+  ONLINE: 'online',
+};
+
+const EXPENSE_CATEGORIES = {
+  SALARY: 'salary',
+  UTILITIES: 'utilities',
+  MAINTENANCE: 'maintenance',
+  SUPPLIES: 'supplies',
+  TRANSPORT: 'transport',
+  EQUIPMENT: 'equipment',
+  OTHER: 'other',
+};
+
+const USER_ROLES = {
+  DIRECTOR: 'director',
+  PRINCIPAL: 'principal',
+  ACCOUNTANT: 'accountant',
+  ADMIN: 'admin',
+};
+
 module.exports = {
-  // User Roles
-  ROLES: {
-    DIRECTOR: 'director',
-    PRINCIPAL: 'principal',
-    ACCOUNTANT: 'accountant',
-    ADMIN: 'admin',
-  },
-
-  // Transaction Types
-  TRANSACTION_TYPES: {
-    FEE_GENERATED: 'fee_generated',
-    PAYMENT: 'payment',
-    DISCOUNT: 'discount',
-    SCHOLARSHIP: 'scholarship',
-    REFUND: 'refund',
-    LATE_FEE: 'late_fee',
-    EXPENSE: 'expense',
-    ADJUSTMENT: 'adjustment',
-    TRANSPORT_WAIVER: 'transport_waiver',
-  },
-
-  // Payment Modes
-  PAYMENT_MODES: {
-    CASH: 'cash',
-    UPI: 'upi',
-    BANK: 'bank',
-    CHEQUE: 'cheque',
-  },
-
-  // Expense Categories
-  EXPENSE_CATEGORIES: {
-    SALARY: 'salary',
-    ELECTRICITY: 'electricity',
-    TRANSPORT: 'transport',
-    FUEL: 'fuel',
-    INTERNET: 'internet',
-    FURNITURE: 'furniture',
-    BUILDING: 'building',
-    MAINTENANCE: 'maintenance',
-    WATER: 'water',
-    EVENTS: 'events',
-    STATIONERY: 'stationery',
-    MISCELLANEOUS: 'miscellaneous',
-  },
-
-  // Student Status
-  STUDENT_STATUS: {
-    ACTIVE: 'active',
-    INACTIVE: 'inactive',
-    GRADUATED: 'graduated',
-    TRANSFERRED: 'transferred',
-  },
-
-  // Notification Types
-  NOTIFICATION_TYPES: {
-    WHATSAPP: 'whatsapp',
-    SMS: 'sms',
-    EMAIL: 'email',
-  },
+  STUDENT_STATUS,
+  TRANSACTION_TYPES,
+  PAYMENT_MODES,
+  EXPENSE_CATEGORIES,
+  USER_ROLES,
 };

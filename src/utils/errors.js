@@ -1,7 +1,8 @@
 class AppError extends Error {
-  constructor(message, statusCode) {
+  constructor(message, statusCode = 500) {
     super(message);
     this.statusCode = statusCode;
+    this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -9,35 +10,36 @@ class AppError extends Error {
 class ValidationError extends AppError {
   constructor(message) {
     super(message, 400);
-    this.name = 'ValidationError';
   }
 }
 
 class AuthenticationError extends AppError {
-  constructor(message = 'Authentication failed') {
+  constructor(message) {
     super(message, 401);
-    this.name = 'AuthenticationError';
   }
 }
 
 class AuthorizationError extends AppError {
-  constructor(message = 'Not authorized') {
+  constructor(message) {
     super(message, 403);
-    this.name = 'AuthorizationError';
   }
 }
 
 class NotFoundError extends AppError {
-  constructor(message = 'Resource not found') {
+  constructor(message) {
     super(message, 404);
-    this.name = 'NotFoundError';
   }
 }
 
 class ConflictError extends AppError {
-  constructor(message = 'Resource conflict') {
+  constructor(message) {
     super(message, 409);
-    this.name = 'ConflictError';
+  }
+}
+
+class ServerError extends AppError {
+  constructor(message) {
+    super(message, 500);
   }
 }
 
@@ -48,4 +50,5 @@ module.exports = {
   AuthorizationError,
   NotFoundError,
   ConflictError,
+  ServerError,
 };

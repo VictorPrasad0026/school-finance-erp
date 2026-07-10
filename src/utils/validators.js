@@ -1,55 +1,59 @@
-const Joi = require('joi');
+const joi = require('joi');
 
 const schemas = {
-  // User validation
-  userRegistration: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    role: Joi.string().valid('director', 'principal', 'accountant', 'admin').required(),
+  userRegistration: joi.object({
+    email: joi.string().email().required(),
+    password: joi.string().min(8).required(),
+    firstName: joi.string().required(),
+    lastName: joi.string().required(),
+    role: joi.string().valid('director', 'principal', 'accountant', 'admin'),
+    schoolId: joi.string().required(),
   }),
 
-  userLogin: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
+  userLogin: joi.object({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
   }),
 
-  // Student validation
-  studentCreate: Joi.object({
-    admissionNumber: Joi.string().required(),
-    rollNumber: Joi.string().required(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    fatherName: Joi.string().required(),
-    motherName: Joi.string().required(),
-    email: Joi.string().email(),
-    phone: Joi.string().required(),
-    alternatePhone: Joi.string(),
-    address: Joi.string().required(),
-    class: Joi.string().required(),
-    section: Joi.string().required(),
-    admissionDate: Joi.date().required(),
-    status: Joi.string().valid('active', 'inactive', 'graduated', 'transferred'),
+  studentCreate: joi.object({
+    admissionNumber: joi.string().required(),
+    rollNumber: joi.string().required(),
+    firstName: joi.string().required(),
+    lastName: joi.string().required(),
+    email: joi.string().email(),
+    phone: joi.string().required(),
+    alternatePhone: joi.string(),
+    fatherName: joi.string().required(),
+    fatherPhone: joi.string(),
+    motherName: joi.string().required(),
+    motherPhone: joi.string(),
+    address: joi.string().required(),
+    class: joi.string().required(),
+    section: joi.string().required(),
+    admissionDate: joi.date().required(),
   }),
 
-  // Payment validation
-  paymentCreate: Joi.object({
-    studentId: Joi.string().required(),
-    amount: Joi.number().positive().required(),
-    paymentMode: Joi.string().valid('cash', 'upi', 'bank', 'cheque').required(),
-    referenceNumber: Joi.string(),
-    remarks: Joi.string(),
-    monthsPaid: Joi.array().items(Joi.string()),
+  paymentCreate: joi.object({
+    studentId: joi.string().required(),
+    amount: joi.number().min(0).required(),
+    paymentMode: joi.string().valid('cash', 'cheque', 'bank_transfer', 'upi').required(),
+    referenceNumber: joi.string(),
+    chequeNumber: joi.string(),
+    bankName: joi.string(),
+    upiId: joi.string(),
+    transactionId: joi.string(),
+    monthsPaid: joi.array().items(joi.string()),
+    discount: joi.number().min(0),
+    remarks: joi.string(),
   }),
 
-  // Expense validation
-  expenseCreate: Joi.object({
-    category: Joi.string().required(),
-    amount: Joi.number().positive().required(),
-    description: Joi.string().required(),
-    date: Joi.date().required(),
-    createdBy: Joi.string().required(),
+  expenseCreate: joi.object({
+    category: joi.string().required(),
+    description: joi.string().required(),
+    amount: joi.number().min(0).required(),
+    expenseDate: joi.date(),
+    invoiceNumber: joi.string(),
+    remarks: joi.string(),
   }),
 };
 
