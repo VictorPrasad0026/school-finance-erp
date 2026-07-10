@@ -1,45 +1,55 @@
-const { AppError } = require('../utils/errors');
 const logger = require('../utils/logger');
+const { AppError } = require('../utils/errors');
 
 const errorHandler = (err, req, res, next) => {
-  logger.error(err.message);
+  err.statusCode = err.statusCode || 500;
+  err.message = err.message || 'Internal Server Error';
 
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-    });
-  }
+  // Log error
+  logger.error('Error occurred', {
+    statusCode: err.statusCode,
+    message: err.message,
+    path: req.path,
+    method: req.method,
+    stack: err.stack,
+  });
 
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      success: false,
-      message: 'Validation error',
-      details: Object.values(err.errors).map((e) => e.message),
-    });
+  // Wrong MongoDB ID error
+  if (err.name === 'CastError') {
+    const message = `Resource not found with ID: ${err.value}`;
+    err = new AppError(message, 400);
   }
 
   // Mongoose duplicate key error
   if (err.code === 11000) {
-    return res.status(409).json({
-      success: false,
-      message: `Duplicate field: ${Object.keys(err.keyPattern)[0]}`,
-    });
+    const message = `Duplicate field value entered: ${Object.keys(err.keyValue)}`;
+    err = new AppError(message, 400);
   }
 
-  // JWT errors
+  // JWT error
   if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid token',
-    });
+    const message = 'Invalid JSON Web Token';
+    err = new AppError(message, 400);
   }
 
-  // Default error
-  res.status(err.statusCode || 500).json({
+  // JWT expired error
+  if (err.name === 'TokenExpiredError') {
+    const message = 'JSON Web Token has expired';
+    err = new AppError(message, 400);
+  }
+
+  // Validation error
+  if (err.name === 'ValidationError') {
+    const message = Object.values(err.errors)
+      .map((val) => val.message)
+      .join(', ');
+    err = new AppError(message, 400);
+  }
+
+  res.status(err.statusCode).json({
     success: false,
-    message: err.message || 'Internal server error',
+    message: err.message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };
 

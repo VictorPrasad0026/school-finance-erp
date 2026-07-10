@@ -1,27 +1,24 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationError, AuthorizationError } = require('../utils/errors');
-const User = require('../models/User');
+const config = require('../config/env');
 
-const authenticate = async (req, res, next) => {
+const authenticate = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      throw new AuthenticationError('No token provided');
+      throw new AuthenticationError('No authentication token provided');
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-
-    if (!user || !user.isActive) {
-      throw new AuthenticationError('User not found or inactive');
-    }
-
-    req.user = user;
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token expired' });
+    if (error instanceof jwt.TokenExpiredError) {
+      return next(new AuthenticationError('Token expired'));
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return next(new AuthenticationError('Invalid token'));
     }
     next(error);
   }
@@ -34,11 +31,34 @@ const authorize = (...roles) => {
     }
 
     if (!roles.includes(req.user.role)) {
-      return next(new AuthorizationError('Insufficient permissions'));
+      return next(
+        new AuthorizationError(
+          `User role '${req.user.role}' is not authorized to access this resource`
+        )
+      );
     }
 
     next();
   };
 };
 
-module.exports = { authenticate, authorize };
+const optionalAuth = (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (token) {
+      const decoded = jwt.verify(token, config.JWT_SECRET);
+      req.user = decoded;
+    }
+  } catch (error) {
+    // Silently ignore auth errors for optional auth
+  }
+
+  next();
+};
+
+module.exports = {
+  authenticate,
+  authorize,
+  optionalAuth,
+};

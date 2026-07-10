@@ -1,8 +1,8 @@
 const rateLimit = require('express-rate-limit');
 
 const apiLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || 900000),
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || 100),
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -10,9 +10,19 @@ const apiLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,
+  max: 5, // limit each IP to 5 requests per windowMs
   message: 'Too many login attempts, please try again later.',
-  skipSuccessfulRequests: true,
+  skipSuccessfulRequests: true, // Don't count successful requests
 });
 
-module.exports = { apiLimiter, authLimiter };
+const paymentLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per minute
+  message: 'Too many payment requests, please try again later.',
+});
+
+module.exports = {
+  apiLimiter,
+  authLimiter,
+  paymentLimiter,
+};
